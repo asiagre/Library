@@ -6,9 +6,6 @@ import com.project.library.domain.Title;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
-
-import javax.persistence.Id;
-import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -19,6 +16,8 @@ public interface CopyDao extends CrudRepository<Copy, Long> {
     Copy save(Copy copy);
 
     Optional<Copy> findById(Long id);
+
+    boolean existsById(Long id);
 
     Optional<Copy> findByTitle(Title title);
 

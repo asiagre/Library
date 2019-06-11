@@ -41,4 +41,10 @@ public class Rental {
         this.borrowDate = borrowDate;
         this.returnDate = returnDate;
     }
+
+    public Rental(Copy copy, Reader reader, LocalDate borrowDate) {
+        this.copy = copy;
+        this.reader = reader;
+        this.borrowDate = borrowDate;
+    }
 }

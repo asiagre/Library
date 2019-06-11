@@ -1,12 +1,9 @@
 package com.project.library.controller;
 
 import com.project.library.domain.*;
-import com.project.library.mapper.CopyMapper;
-import com.project.library.mapper.TitleMapper;
 import com.project.library.service.BookService;
+import com.project.library.service.RentalService;
 import com.project.library.service.UserService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -23,6 +20,9 @@ public class LibraryController {
     @Autowired
     private BookService bookService;
 
+    @Autowired
+    private RentalService rentalService;
+
     @RequestMapping(method = RequestMethod.POST, value = "users", consumes = APPLICATION_JSON_VALUE)
     public void createReader(@RequestBody ReaderDto readerDto) {
         userService.createReader(readerDto);
@@ -35,13 +35,66 @@ public class LibraryController {
 
     @RequestMapping(method = RequestMethod.POST, value = "titles/{id}/copies", consumes = APPLICATION_JSON_VALUE)
     public void addCopy(@PathVariable Long id, @RequestBody CopyDto copy) {
-        validateId(id);
+        validateTitleId(id);
         bookService.addCopy(id, copy);
     }
 
-    private void validateId(Long id) {
+    @RequestMapping(method = RequestMethod.PUT, value = "titles/{titleId}/copies/{copyId}", consumes = APPLICATION_JSON_VALUE)
+    public void changeState(@PathVariable Long titleId, @PathVariable Long copyId, @RequestParam State state) {
+        validateTitleId(titleId);
+        validateCopyId(copyId);
+        bookService.changeState(copyId, state);
+    }
+
+    @RequestMapping(method = RequestMethod.GET, value = "titles/{id}")
+    public int howManyCopiesAvailable(@PathVariable Long id) {
+        validateTitleId(id);
+        return bookService.howManyCopiesAvailable(id);
+    }
+
+    @RequestMapping(method = RequestMethod.POST, value = "user/{id}/rental", consumes = APPLICATION_JSON_VALUE)
+    public void rentBook(@PathVariable Long id, @RequestBody RentalDto rentalDto) {
+        validateUserId(rentalDto.getReaderId());
+        validateCopyId(rentalDto.getCopyId());
+        validateIfBorrowed(rentalDto.getCopyId());
+        rentalService.rentABook(rentalDto);
+    }
+
+    @RequestMapping(method = RequestMethod.PUT, value = "user/{userId}/rental/{rentalId}")
+    public void returnBook(@PathVariable Long userId, @PathVariable Long rentalId) {
+        validateUserId(userId);
+        validateRentalId(rentalId);
+        rentalService.returnBook(rentalId);
+    }
+
+    private void validateTitleId(Long id) {
         if(!bookService.isBookExist(id)) {
-            throw new RuntimeException();
+            throw new WrongIdException("Wrong title id");
+        }
+    }
+
+    private void validateCopyId(Long id) {
+        if(!bookService.isCopyExist(id)) {
+            throw new WrongIdException("Wrong copy id");
+        }
+    }
+
+    private void validateUserId(Long id) {
+        if(!userService.isUserExist(id)) {
+            throw new WrongIdException("Wrong user id");
+        }
+    }
+
+    private void validateIfBorrowed(Long id) {
+        Copy copy = bookService.getCopy(id).get();
+        if(copy.getState() != State.PREOWNED) {
+            throw new BookNotAvailableException("This copy is not available");
+        }
+    }
+
+    private void validateRentalId(Long id) {
+        if(!rentalService.isRentalExist(id)) {
+            throw new WrongIdException("Wrong rental id");
         }
     }
 }

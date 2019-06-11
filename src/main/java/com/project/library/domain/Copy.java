@@ -30,4 +30,8 @@ public class Copy {
         this.state = state;
     }
 
+    public void setState(State state) {
+        this.state = state;
+    }
+
 }

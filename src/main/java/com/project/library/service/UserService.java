@@ -19,4 +19,8 @@ public class UserService {
         ReaderDto user = new ReaderDto(readerDto.getFirstName(), readerDto.getLastName());
         return readerMapper.mapToReaderDto(readerDao.save(readerMapper.mapToReader(user)));
     }
+
+    public boolean isUserExist(long id) {
+        return readerDao.existsById(id);
+    }
 }

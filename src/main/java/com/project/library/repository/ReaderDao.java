@@ -15,4 +15,8 @@ public interface ReaderDao extends CrudRepository<Reader, Long> {
     Reader save(Reader reader);
 
     Optional<Reader> findByLastName(String lastName);
+
+    boolean existsById(long id);
+
+    Optional<Reader> findById(Long id);
 }

@@ -3,7 +3,6 @@ package com.project.library.mapper;
 import com.project.library.domain.Copy;
 import com.project.library.domain.CopyDto;
 import com.project.library.domain.Title;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
