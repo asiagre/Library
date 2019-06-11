@@ -61,10 +61,10 @@ public class LibraryController {
     }
 
     @RequestMapping(method = RequestMethod.PUT, value = "user/{userId}/rental/{rentalId}")
-    public void returnBook(@PathVariable Long userId, @PathVariable Long rentalId) {
+    public void returnBook(@PathVariable Long userId, @PathVariable Long rentalId, @RequestParam boolean destroyed, @RequestParam boolean paid) {
         validateUserId(userId);
         validateRentalId(rentalId);
-        rentalService.returnBook(rentalId);
+        rentalService.returnBook(rentalId, destroyed, paid);
     }
 
     private void validateTitleId(Long id) {

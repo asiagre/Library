@@ -1,5 +1,5 @@
 package com.project.library.domain;
 
 public enum State {
-    PREOWNED, BORROWED, DESTROYED, LOST
+    PREOWNED, BORROWED, DESTROYED
 }

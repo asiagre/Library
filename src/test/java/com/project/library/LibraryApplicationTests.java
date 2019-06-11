@@ -119,7 +119,7 @@ public class LibraryApplicationTests {
         Copy copy = new Copy(title, State.PREOWNED);
         Copy copy1 = new Copy(title, State.DESTROYED);
         Copy copy2 = new Copy(title, State.PREOWNED);
-        Copy copy3 = new Copy(title, State.LOST);
+        Copy copy3 = new Copy(title, State.BORROWED);
         Copy copy4 = new Copy(title, State.PREOWNED);
         title.getCopies().add(copy);
         title.getCopies().add(copy1);

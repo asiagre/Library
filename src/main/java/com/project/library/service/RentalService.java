@@ -31,11 +31,19 @@ public class RentalService {
         return rentalMapper.mapToRentalDto(rental);
     }
 
-    public Rental returnBook(Long rentalId) {
+    public Rental returnBook(Long rentalId, boolean destroyed, boolean paid) {
         Optional<Rental> rental = rentalDao.findById(rentalId);
         RentalDto rentalDto = rentalMapper.mapToRentalDto(rental.get());
+        if(destroyed) {
+            if(paid) {
+                bookService.changeState(rentalDto.getCopyId(), State.DESTROYED);
+            } else {
+                throw new RuntimeException("The reader has destroyed or lost a book and did not pay for it");
+            }
+        } else {
+            bookService.changeState(rentalDto.getCopyId(), State.PREOWNED);
+        }
         rentalDto.setReturnDate(LocalDate.now());
-        bookService.changeState(rentalDto.getCopyId(), State.PREOWNED);
         return rentalDao.save(rentalMapper.mapToRental(rentalDto));
     }
 
