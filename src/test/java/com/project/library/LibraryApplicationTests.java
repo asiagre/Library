@@ -1,11 +1,7 @@
 package com.project.library;
 
-import com.project.library.controller.LibraryController;
 import com.project.library.domain.*;
-import com.project.library.mapper.CopyMapper;
-import com.project.library.mapper.ReaderMapper;
 import com.project.library.mapper.RentalMapper;
-import com.project.library.mapper.TitleMapper;
 import com.project.library.repository.CopyDao;
 import com.project.library.repository.ReaderDao;
 import com.project.library.repository.RentalDao;
@@ -18,7 +14,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.time.LocalDate;
-import java.util.List;
 import java.util.Optional;
 
 @RunWith(SpringRunner.class)

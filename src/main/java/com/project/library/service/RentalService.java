@@ -1,10 +1,9 @@
 package com.project.library.service;
 
-import com.project.library.domain.Copy;
-import com.project.library.domain.Rental;
-import com.project.library.domain.RentalDto;
-import com.project.library.domain.State;
+import com.project.library.domain.*;
+import com.project.library.mapper.CopyMapper;
 import com.project.library.mapper.RentalMapper;
+import com.project.library.repository.CopyDao;
 import com.project.library.repository.RentalDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -19,15 +18,18 @@ public class RentalService {
     private RentalDao rentalDao;
 
     @Autowired
-    private BookService bookService;
+    private CopyDao copyDao;
 
     @Autowired
     private RentalMapper rentalMapper;
 
+    @Autowired
+    private CopyMapper copyMapper;
+
     public RentalDto rentABook(RentalDto rentalDto) {
         rentalDto.setBorrowDate(LocalDate.now());
         Rental rental = rentalDao.save(rentalMapper.mapToRental(rentalDto));
-        bookService.changeState(rentalDto.getCopyId(), State.BORROWED);
+        changeState(rentalDto.getCopyId(), State.BORROWED);
         return rentalMapper.mapToRentalDto(rental);
     }
 
@@ -36,12 +38,12 @@ public class RentalService {
         RentalDto rentalDto = rentalMapper.mapToRentalDto(rental.get());
         if(destroyed) {
             if(paid) {
-                bookService.changeState(rentalDto.getCopyId(), State.DESTROYED);
+                changeState(rentalDto.getCopyId(), State.DESTROYED);
             } else {
                 throw new RuntimeException("The reader has destroyed or lost a book and did not pay for it");
             }
         } else {
-            bookService.changeState(rentalDto.getCopyId(), State.PREOWNED);
+            changeState(rentalDto.getCopyId(), State.PREOWNED);
         }
         rentalDto.setReturnDate(LocalDate.now());
         return rentalDao.save(rentalMapper.mapToRental(rentalDto));
@@ -49,5 +51,11 @@ public class RentalService {
 
     public boolean isRentalExist(Long id) {
         return rentalDao.existsById(id);
+    }
+
+    private CopyDto changeState(Long copyId, State state) {
+        Copy copy = copyDao.findOne(copyId);
+        copy.setState(state);
+        return copyMapper.mapToCopyDto(copyDao.save(copy));
     }
 }
