@@ -1,12 +1,10 @@
 package com.project.library.domain;
 
-import com.sun.javafx.beans.IDProperty;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
 
 @AllArgsConstructor
@@ -35,16 +33,7 @@ public class Rental {
     @Column(name = "return_date")
     private LocalDate returnDate;
 
-    public Rental(Copy copy, Reader reader, LocalDate borrowDate, LocalDate returnDate) {
-        this.copy = copy;
-        this.reader = reader;
-        this.borrowDate = borrowDate;
-        this.returnDate = returnDate;
-    }
+    @Column(name = "isReturned")
+    private boolean returned;
 
-    public Rental(Copy copy, Reader reader, LocalDate borrowDate) {
-        this.copy = copy;
-        this.reader = reader;
-        this.borrowDate = borrowDate;
-    }
 }

@@ -1,6 +1,5 @@
 package com.project.library.repository;
 
-import com.project.library.domain.Copy;
 import com.project.library.domain.Reader;
 import com.project.library.domain.Rental;
 import org.springframework.data.repository.CrudRepository;
@@ -21,7 +20,5 @@ public interface RentalDao extends CrudRepository<Rental, Long> {
     boolean existsById(Long id);
 
     Optional<Rental> findById(long id);
-
-    Optional<Rental> findByCopy(Copy copy);
 
 }

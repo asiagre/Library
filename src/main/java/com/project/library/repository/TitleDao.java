@@ -7,15 +7,12 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
-
 @Repository
 @Transactional
 public interface TitleDao extends CrudRepository<Title, Long> {
 
     @Override
     Title save(Title title);
-
-    Optional<Title> findById(Long id);
 
     Optional<Title> findByBookTitle(String bookTitle);
 

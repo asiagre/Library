@@ -19,8 +19,6 @@ public interface CopyDao extends CrudRepository<Copy, Long> {
 
     boolean existsById(Long id);
 
-    Optional<Copy> findByTitle(Title title);
-
     Optional<Copy> findByTitleAndState(Title title, State state);
 
 

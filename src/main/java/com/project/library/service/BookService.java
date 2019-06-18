@@ -32,22 +32,6 @@ public class BookService {
         return titleMapper.mapToTitleDto(titleDao.save(title));
     }
 
-    public Optional<Title> getBook(final Long id) {
-        return titleDao.findById(id);
-    }
-
-    public Optional<Copy> getCopy(final Long id) {
-        return copyDao.findById(id);
-    }
-
-    public boolean isBookExist(final Long id) {
-        return titleDao.existsById(id);
-    }
-
-    public boolean isCopyExist(final Long id) {
-        return copyDao.existsById(id);
-    }
-
     public CopyDto addCopy(Long id, CopyDto copyDto) {
         Title title = titleDao.findOne(id);
         Copy copy = copyMapper.mapToCopy(title, copyDto);
@@ -66,5 +50,17 @@ public class BookService {
                 .filter(copy -> copy.getState().equals(State.PREOWNED))
                 .collect(Collectors.toList());
         return availableCopies.size();
+    }
+
+    public Optional<Copy> getCopy(final Long id) {
+        return copyDao.findById(id);
+    }
+
+    public boolean isBookExist(final Long id) {
+        return titleDao.existsById(id);
+    }
+
+    public boolean isCopyExist(final Long id) {
+        return copyDao.existsById(id);
     }
 }

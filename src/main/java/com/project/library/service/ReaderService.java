@@ -7,7 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
-public class UserService {
+public class ReaderService {
 
     @Autowired
     private ReaderDao readerDao;
@@ -16,11 +16,11 @@ public class UserService {
     private ReaderMapper readerMapper;
 
     public ReaderDto createReader(final ReaderDto readerDto) {
-        ReaderDto user = new ReaderDto(readerDto.getFirstName(), readerDto.getLastName());
-        return readerMapper.mapToReaderDto(readerDao.save(readerMapper.mapToReader(user)));
+        ReaderDto reader = new ReaderDto(readerDto.getFirstName(), readerDto.getLastName());
+        return readerMapper.mapToReaderDto(readerDao.save(readerMapper.mapToReader(reader)));
     }
 
-    public boolean isUserExist(long id) {
+    public boolean isReaderExist(long id) {
         return readerDao.existsById(id);
     }
 }

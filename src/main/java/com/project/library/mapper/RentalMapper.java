@@ -24,11 +24,11 @@ public class RentalMapper {
     public Rental mapToRental(final RentalDto rentalDto) {
         Optional<Copy> copy = copyDao.findById(rentalDto.getCopyId());
         Optional<Reader> reader = userDao.findById(rentalDto.getReaderId());
-        return new Rental(rentalDto.getId(), copy.get(), reader.get(), rentalDto.getBorrowDate(), rentalDto.getReturnDate());
+        return new Rental(rentalDto.getId(), copy.get(), reader.get(), rentalDto.getBorrowDate(), rentalDto.getReturnDate(), rentalDto.isReturned());
     }
 
     public RentalDto mapToRentalDto(final Rental rental) {
-        return new RentalDto(rental.getId(), rental.getReader().getId(), rental.getCopy().getId(), rental.getBorrowDate(), rental.getReturnDate());
+        return new RentalDto(rental.getId(), rental.getReader().getId(), rental.getCopy().getId(), rental.getBorrowDate(), rental.getReturnDate(), rental.isReturned());
     }
 
     public List<RentalDto> mapToRentalDtoList(final List<Rental> rentalList) {

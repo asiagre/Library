@@ -17,12 +17,6 @@ public class TitleDto {
     private int publishedYear;
     private List<CopyDto> copyDtos = new ArrayList<>();
 
-    public TitleDto(String bookTitle, String author, int publishedYear) {
-        this.bookTitle = bookTitle;
-        this.author = author;
-        this.publishedYear = publishedYear;
-    }
-
     public TitleDto(Long id, String bookTitle, String author, int publishedYear) {
         this.id = id;
         this.bookTitle = bookTitle;

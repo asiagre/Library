@@ -5,7 +5,7 @@ import com.project.library.domain.RentalDto;
 import com.project.library.domain.State;
 import com.project.library.service.BookService;
 import com.project.library.service.RentalService;
-import com.project.library.service.UserService;
+import com.project.library.service.ReaderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -23,14 +23,14 @@ public class RentalController {
     private BookService bookService;
 
     @Autowired
-    private UserService userService;
+    private ReaderService readerService;
 
     @RequestMapping(method = RequestMethod.POST, value = "{id}/rental", consumes = APPLICATION_JSON_VALUE)
     public void rentBook(@PathVariable Long id, @RequestBody RentalDto rentalDto) {
         validateUserId(rentalDto.getReaderId());
         validateCopyId(rentalDto.getCopyId());
         validateIfBorrowed(rentalDto.getCopyId());
-        rentalService.rentABook(rentalDto);
+        rentalService.rentBook(rentalDto);
     }
 
     @RequestMapping(method = RequestMethod.PUT, value = "{userId}/rental/{rentalId}")
@@ -47,7 +47,7 @@ public class RentalController {
     }
 
     private void validateUserId(Long id) {
-        if(!userService.isUserExist(id)) {
+        if(!readerService.isReaderExist(id)) {
             throw new WrongIdException("Wrong user id");
         }
     }
@@ -60,7 +60,7 @@ public class RentalController {
     }
 
     private void validateRentalId(Long id) {
-        if(!rentalService.isRentalExist(id)) {
+        if(!rentalService.isBorrowed(id)) {
             throw new WrongIdException("Wrong rental id");
         }
     }

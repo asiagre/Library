@@ -26,11 +26,4 @@ public class CopyMapper {
                 .collect(Collectors.toList());
 
     }
-
-    public List<Copy> mapToCopyList(Title title, final List<CopyDto> copyDtoList) {
-
-        return copyDtoList.stream()
-                .map(copyDto -> mapToCopy(title, copyDto))
-                .collect(Collectors.toList());
-    }
 }

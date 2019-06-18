@@ -2,7 +2,6 @@ package com.project.library.mapper;
 
 import com.project.library.domain.Title;
 import com.project.library.domain.TitleDto;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
