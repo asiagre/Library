@@ -11,11 +11,11 @@ import java.util.stream.Collectors;
 public class ReaderMapper {
 
     public Reader mapToReader(final ReaderDto readerDto) {
-        return new Reader(readerDto.getFirstName(), readerDto.getLastName(), readerDto.getDateCreated());
+        return new Reader(readerDto.getId(), readerDto.getFirstName(), readerDto.getLastName(), readerDto.getDateCreated(), readerDto.getMail(), readerDto.isActive());
     }
 
     public ReaderDto mapToReaderDto(final Reader reader) {
-        return new ReaderDto(reader.getId(), reader.getFirstName(), reader.getLastName(), reader.getDateCreated());
+        return new ReaderDto(reader.getId(), reader.getFirstName(), reader.getLastName(), reader.getMail(), reader.getDateCreated(), reader.isActive());
     }
 
     public List<ReaderDto> mapToReaderDtoList(final List<Reader> readerList) {

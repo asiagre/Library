@@ -36,4 +36,10 @@ public class Rental {
     @Column(name = "isReturned")
     private boolean returned;
 
+    public Rental(Copy copy, Reader reader, LocalDate borrowDate, boolean returned) {
+        this.copy = copy;
+        this.reader = reader;
+        this.borrowDate = borrowDate;
+        this.returned = returned;
+    }
 }

@@ -26,6 +26,9 @@ public class BookService {
     @Autowired
     private CopyMapper copyMapper;
 
+    public List<TitleDto> getBooks() {
+        return titleMapper.mapToTitleDtoList(titleDao.findAll());
+    }
 
     public TitleDto addBook(final TitleDto titleDto) {
         Title title = titleMapper.mapToTitle(titleDto);
@@ -54,6 +57,18 @@ public class BookService {
 
     public Optional<Copy> getCopy(final Long id) {
         return copyDao.findById(id);
+    }
+
+    public List<TitleDto> findBooksByTitle(final String title) {
+        return titleMapper.mapToTitleDtoList(titleDao.retrieveBookByTitle(title));
+    }
+
+    public List<TitleDto> findBooksByAuthor(final String author) {
+        return titleMapper.mapToTitleDtoList(titleDao.retrieveBookByAuthor(author));
+    }
+
+    public void deleteBook(Long titleId) {
+        titleDao.delete(titleId);
     }
 
     public boolean isBookExist(final Long id) {

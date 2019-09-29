@@ -1,4 +1,4 @@
-package com.project.library.controller;
+package com.project.library.exception;
 
 public class BookNotAvailableException extends RuntimeException {
     public BookNotAvailableException(String message) {

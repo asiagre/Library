@@ -1,18 +1,17 @@
 package com.project.library.controller;
 
-import com.project.library.domain.Copy;
 import com.project.library.domain.RentalDto;
-import com.project.library.domain.State;
-import com.project.library.service.BookService;
 import com.project.library.service.RentalService;
-import com.project.library.service.ReaderService;
+import com.project.library.validator.BookValidator;
+import com.project.library.validator.ReaderValidator;
+import com.project.library.validator.RentalValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 @RestController
-@RequestMapping("/v1/library/user")
+@RequestMapping("/v1/library/users")
 @CrossOrigin(origins = "*")
 public class RentalController {
 
@@ -20,49 +19,27 @@ public class RentalController {
     private RentalService rentalService;
 
     @Autowired
-    private BookService bookService;
+    private BookValidator bookValidator;
 
     @Autowired
-    private ReaderService readerService;
+    private ReaderValidator readerValidator;
 
-    @RequestMapping(method = RequestMethod.POST, value = "{id}/rental", consumes = APPLICATION_JSON_VALUE)
+    @Autowired
+    private RentalValidator rentalValidator;
+
+    @RequestMapping(method = RequestMethod.POST, value = "{id}/rentals", consumes = APPLICATION_JSON_VALUE)
     public void rentBook(@PathVariable Long id, @RequestBody RentalDto rentalDto) {
-        validateUserId(rentalDto.getReaderId());
-        validateCopyId(rentalDto.getCopyId());
-        validateIfBorrowed(rentalDto.getCopyId());
+        readerValidator.validateReaderId(rentalDto.getReaderId());
+        bookValidator.validateCopyId(rentalDto.getCopyId());
+        rentalValidator.validateIfBorrowed(rentalDto.getCopyId());
         rentalService.rentBook(rentalDto);
     }
 
-    @RequestMapping(method = RequestMethod.PUT, value = "{userId}/rental/{rentalId}")
+    @RequestMapping(method = RequestMethod.PUT, value = "{userId}/rentals/{rentalId}")
     public void returnBook(@PathVariable Long userId, @PathVariable Long rentalId, @RequestParam boolean destroyed, @RequestParam boolean paid) {
-        validateUserId(userId);
-        validateRentalId(rentalId);
-        rentalService.returnBook(rentalId, destroyed, paid);
-    }
-
-    private void validateCopyId(Long id) {
-        if(!bookService.isCopyExist(id)) {
-            throw new WrongIdException("Wrong copy id");
-        }
-    }
-
-    private void validateUserId(Long id) {
-        if(!readerService.isReaderExist(id)) {
-            throw new WrongIdException("Wrong user id");
-        }
-    }
-
-    private void validateIfBorrowed(Long id) {
-        Copy copy = bookService.getCopy(id).get();
-        if(copy.getState() != State.PREOWNED) {
-            throw new BookNotAvailableException("This copy is not available");
-        }
-    }
-
-    private void validateRentalId(Long id) {
-        if(!rentalService.isBorrowed(id)) {
-            throw new WrongIdException("Wrong rental id");
-        }
+        readerValidator.validateReaderId(userId);
+        rentalValidator.validateRentalId(rentalId);
+        rentalService.returnBook(userId, rentalId, destroyed, paid);
     }
 
 }

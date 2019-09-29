@@ -1,11 +1,8 @@
-package com.project.library;
+package com.project.library.repository;
 
-import com.project.library.domain.*;
-import com.project.library.mapper.RentalMapper;
-import com.project.library.repository.CopyDao;
-import com.project.library.repository.ReaderDao;
-import com.project.library.repository.RentalDao;
-import com.project.library.repository.TitleDao;
+import com.project.library.domain.Copy;
+import com.project.library.domain.State;
+import com.project.library.domain.Title;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -13,14 +10,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import java.time.LocalDate;
+import java.util.List;
 import java.util.Optional;
+
+import static org.junit.Assert.*;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
-public class LibraryApplicationTests {
-    @Autowired
-    private ReaderDao readerDao;
+public class BookDaoTest {
 
     @Autowired
     private TitleDao titleDao;
@@ -28,27 +25,21 @@ public class LibraryApplicationTests {
     @Autowired
     private CopyDao copyDao;
 
-    @Autowired
-    private RentalDao rentalDao;
-
-    @Autowired
-    private RentalMapper rentalMapper;
-
     @Test
-    public void shouldSaveReader() {
+    public void shouldGetBooks() {
         //Given
-        Reader reader = new Reader("Jan", "Kowalski", LocalDate.now());
+        Title title = new Title("The Lord of The Rings", "J.R.R. Tolkien", 1954);
+        titleDao.save(title);
 
         //When
-        readerDao.save(reader);
-        Optional<Reader> readerFromDb = readerDao.findByLastName("Kowalski");
+        List<Title> titles = titleDao.findAll();
 
         //Then
-        Assert.assertNotEquals(null, readerFromDb);
-        Assert.assertNotEquals("O", readerFromDb.get().getId());
+        Assert.assertEquals(1, titles.size());
+        Assert.assertEquals("The Lord of The Rings", titles.get(0).getBookTitle());
 
         //CleanUp
-        readerDao.delete(readerFromDb.get().getId());
+        titleDao.delete(titles.get(0).getId());
     }
 
     @Test
@@ -134,43 +125,98 @@ public class LibraryApplicationTests {
         titleDao.delete(titleFromDb.get().getId());
     }
 
+
     @Test
-    public void shouldCreateRental() {
-        Reader reader = new Reader("Jan", "Kowalski", LocalDate.now());
+    public void shouldFindBookByTitle() {
+        //Given
         Title title = new Title("The Lord of The Rings", "J.R.R. Tolkien", 1954);
-        Copy copy = new Copy(title, State.PREOWNED);
-        Rental rental = new Rental(copy, reader, LocalDate.now());
+        titleDao.save(title);
 
         //When
-        rentalDao.save(rental);
-        Optional<Rental> rentalFromDb = rentalDao.findByReader(reader);
+        Title titleFromDb = titleDao.retrieveBookByTitle("ord").get(0);
 
         //Then
-        Assert.assertNotEquals("0", rentalFromDb.get().getId());
+        Assert.assertNotEquals(null, titleFromDb);
+        Assert.assertNotEquals("O", titleFromDb.getId());
 
         //CleanUp
-        rentalDao.delete(rentalFromDb.get().getId());
+        titleDao.delete(titleFromDb.getId());
+    }
+
+
+    @Test
+    public void shouldFindBookByAuthor() {
+        //Given
+        Title title = new Title("The Lord of The Rings", "J.R.R. Tolkien", 1954);
+        titleDao.save(title);
+
+        //When
+        Title titleFromDb = titleDao.retrieveBookByAuthor("Tolk").get(0);
+
+        //Then
+        Assert.assertNotEquals(null, titleFromDb);
+        Assert.assertNotEquals("O", titleFromDb.getId());
+
+        //CleanUp
+        titleDao.delete(titleFromDb.getId());
     }
 
     @Test
-    public void shouldReturnBook() {
-        Reader reader = new Reader("Jan", "Kowalski", LocalDate.now());
-        Title title = new Title("The Lord of The Rings", "J.R.R. Tolkien", 1954);
-        Copy copy = new Copy(title, State.PREOWNED);
-        Rental rental = new Rental(copy, reader, LocalDate.now());
-        rentalDao.save(rental);
-        RentalDto rentalDto = rentalMapper.mapToRentalDto(rental);
+    public void shouldDeleteBook() {
+        //Given
+        Title title1 = new Title("The Lord of The Rings", "J.R.R. Tolkien", 1954);
+        titleDao.save(title1);
 
         //When
-        rentalDto.setReturnDate(LocalDate.now());
-        rentalDao.save(rentalMapper.mapToRental(rentalDto));
-        Optional<Rental> rentalFromDb = rentalDao.findByReader(reader);
+        List<Title> titlesBeforeRemoving = titleDao.findAll();
+        Long id = titlesBeforeRemoving.get(0).getId();
+        titleDao.delete(id);
+        List<Title> titlesAfterRemoving = titleDao.findAll();
 
         //Then
-        Assert.assertNotEquals(null, rentalFromDb.get().getReturnDate());
+        Assert.assertEquals(1, titlesBeforeRemoving.size());
+        Assert.assertEquals(0, titlesAfterRemoving.size());
+    }
+
+    @Test
+    public void shouldFindTitleIfExist() {
+        //Given
+        //Given
+        Title title1 = new Title("The Lord of The Rings", "J.R.R. Tolkien", 1954);
+        titleDao.save(title1);
+
+        //When
+        Long id1 = titleDao.findByBookTitle("The Lord of The Rings").get().getId();
+        boolean exist1 = titleDao.existsById(id1);
+        boolean exist2 = titleDao.existsById(200L);
+
+        //Then
+        Assert.assertTrue(exist1);
+        Assert.assertFalse(exist2);
 
         //CleanUp
-        rentalDao.delete(rentalFromDb.get().getId());
+        titleDao.delete(id1);
+    }
+
+    @Test
+    public void shouldFindCopyIfExist() {
+        //Given
+        Title title = new Title("The Lord of The Rings", "J.R.R. Tolkien", 1954);
+        Copy copy = new Copy(title, State.PREOWNED);
+        title.getCopies().add(copy);
+        titleDao.save(title);
+
+        //When
+        Long id1 = copyDao.findByTitleAndState(title, State.PREOWNED).get().getId();
+        boolean exist1 = copyDao.existsById(id1);
+        boolean exist2 = copyDao.existsById(200L);
+
+        //Then
+        Assert.assertTrue(exist1);
+        Assert.assertFalse(exist2);
+
+        //CleanUp
+        copyDao.delete(id1);
     }
 
 }

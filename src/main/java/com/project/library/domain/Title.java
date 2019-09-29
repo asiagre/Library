@@ -8,6 +8,18 @@ import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 
+@NamedNativeQueries({
+        @NamedNativeQuery(
+                name = "Title.retrieveBookByTitle",
+                query = "SELECT * FROM titles WHERE lower(book_title) LIKE CONCAT('%', :TITLE, '%')",
+                resultClass = Title.class
+        ),
+        @NamedNativeQuery(
+                name = "Title.retrieveBookByAuthor",
+                query = "SELECT * FROM titles WHERE lower(author) LIKE CONCAT('%', :AUTHOR, '%')",
+                resultClass = Title.class
+        )
+})
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter

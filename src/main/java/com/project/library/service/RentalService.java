@@ -1,10 +1,10 @@
 package com.project.library.service;
 
-import com.project.library.controller.WrongIdException;
 import com.project.library.domain.*;
 import com.project.library.mapper.CopyMapper;
 import com.project.library.mapper.RentalMapper;
 import com.project.library.repository.CopyDao;
+import com.project.library.repository.ReaderDao;
 import com.project.library.repository.RentalDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -17,6 +17,9 @@ public class RentalService {
 
     @Autowired
     private RentalDao rentalDao;
+
+    @Autowired
+    private ReaderDao readerDao;
 
     @Autowired
     private CopyDao copyDao;
@@ -34,16 +37,16 @@ public class RentalService {
         return rentalMapper.mapToRentalDto(rental);
     }
 
-    public RentalDto returnBook(Long rentalId, boolean destroyed, boolean paid) {
+    public RentalDto returnBook(Long readerId, Long rentalId, boolean destroyed, boolean paid) {
         Optional<Rental> rental = rentalDao.findById(rentalId);
         RentalDto rentalDto = rentalMapper.mapToRentalDto(rental.get());
-//        if(rentalDto.isReturned()) {
-//            throw new WrongIdException("Wrong id. This rental is already returned.");
-//        }
         if (destroyed) {
             if (paid) {
                 changeState(rentalDto.getCopyId(), State.DESTROYED);
             } else {
+                Reader reader = readerDao.findById(readerId).get();
+                reader.setActive(false);
+                readerDao.save(reader);
                 throw new RuntimeException("The reader has destroyed or lost a book and did not pay for it");
             }
         } else {
