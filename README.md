@@ -9,7 +9,7 @@ http://localhost:8080/swagger-ui.html
 
 Download this repo to your computer (click green button "Clone or download"). Open 
 directory in your IDLE (for example IntelliJ), create database (you have 
-credentials in resources/application.properties) and run.
+credentials in resources/application.properties) and run program.
 
 
 ## License
